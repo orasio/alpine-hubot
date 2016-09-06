@@ -10,8 +10,11 @@ RUN apk update && apk upgrade \
   && apk add curl \
   && curl -sS https://bootstrap.pypa.io/get-pip.py | python \
   && pip install awscli \
-  && npm install -g npm \
-  && npm install -g coffee-script \
+  && pip install zabbix-api
+RUN npm install -g npm --prefix=/usr/local
+RUN ln -s -f /usr/local/bin/npm /usr/bin/npm 
+
+RUN npm install -g coffee-script \
   && npm install -g yo generator-hubot \
   && apk --purge -v del py-pip \
   && rm -rf /var/cache/apk/*
@@ -22,8 +25,9 @@ USER  hubot
 WORKDIR /hubot
 
 # Install hubot
-RUN yo hubot --owner="Ben Visser <benny@noqcks.io>" --name="dockbot" --description="Roll, roll, rollercoaster" --defaults
+RUN yo hubot --owner="Horacio <horacio@upshow.tv>" --name="upbot" --description="Our own metal overlord" --defaults
 COPY package.json package.json
+RUN npm cache clean
 RUN npm install
 ADD hubot/hubot-scripts.json /hubot/
 ADD hubot/external-scripts.json /hubot/
